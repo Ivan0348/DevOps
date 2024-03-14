@@ -1,11 +1,10 @@
 # DEVOPS - Week6
-
 Practicum week 6
 
 Starten met monitoring: Prometheus en Grafana, door gebruik te maken van een Chat App.
 
-## Enable metrics endpoint in Chat API
 
+## Enable metrics endpoint in Chat API
 Create `Dockerfile` in chatapi folder.
 With the following contents:
 
@@ -27,8 +26,8 @@ CMD [ "npm", "start" ]
 `npm install express-prom-bundle --save`<br/>
 `npm install --save-dev nodemon`<br/><br/>
 
-Then add the following line of code in `app.js`<br/><br/>
 
+Then add the following line of code in `app.js`<br/><br/>
 ```
 ...
 
@@ -58,7 +57,6 @@ Modify `package.json` file and add the following line to `scripts`:
 <br/><br/>
 
 Create an api in `users.js` which should demonstrate slowness.<br/>
-
 ```
 router.get('/slow', function(req, res, next) {
   setTimeout(() => {
@@ -84,7 +82,6 @@ Modify contents of `socket-api.js`.
 const client = require('prom-client');
 const gauge = new client.Gauge({ name: 'number_of_clients', help: 'Some metrics about numer of connected chat users'});
 ```
-
 <br/><br/>
 Now during connecting and disconnection use the code below:
 
@@ -93,7 +90,6 @@ gauge.inc(1);  // When a connection is established
 
 gauge.dec(1); // When a user is disconnected.
 ````
-
 <br/>
 
 <b>Lets test it</b>
@@ -102,12 +98,10 @@ This should create a new user connection each time.
 Results can be found at `http://localhost:3000/metrics`. See topic `number_of_clients` in response
 
 ## Enable Prometheus
-
 Create 2 prometheus configuration files in `/prometheus` folder. <br/>
 `alert.yml` and `prometheus.yml`<br/><br/>
 
 Contents of `alert.yml`<br/>
-
 ```
 groups:
   - name: DemoAlerts
@@ -119,10 +113,8 @@ groups:
         expr: http_request_duration_seconds_sum{job="api", path="/users/slow"} > 2
         for: 20s
 ```
-
 <br></br>
 Contents of `/prometheus/prometheus.yml`<br/>
-
 ```
 global:
   scrape_interval: 15s
@@ -138,10 +130,8 @@ scrape_configs:
       - targets: ["api:5000"]
 
 ```
-
 <b>Create docker compose file</b><br/>
 `docker-compose.yml` file with the following contents:
-
 ```
 version: '3.9'
 
@@ -178,7 +168,6 @@ Then the alerting in prometheus should fire after 30seconds as configured
 
 Create the following files below:
 `grafana/config.ini`
-
 ```
 [paths]
 provisioning = /etc/grafana/provisioning
@@ -191,7 +180,6 @@ default_theme = light
 ```
 
 `grafana/provisioning/dashboards/all.yml`
-
 ```
 - name: 'default'
   org_id: 1
@@ -201,9 +189,7 @@ default_theme = light
     folder: '/var/lib/grafana/dashboards'
 
 ```
-
 `grafana/provisioning/datasources/all.yml`
-
 ```
 datasources:
   - name: 'Prometheus'
@@ -217,7 +203,6 @@ datasources:
 ```
 
 `grafana/Dockerfile`
-
 ```
 FROM grafana/grafana:latest
 
@@ -231,7 +216,6 @@ template id: 11159 imported from Grafana UI.
 
 <br></br>
 Now modify the `Docker-compose.yml` file and add the following service:
-
 ```
   grafana:
     build: ./grafana
