@@ -1,0 +1,37 @@
+kind: Environment
+name: preview
+type: primary
+urlHandle: g4fnfl
+components:
+  - kind: Application
+    name: todo-app
+    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
+    gitBranch: main
+    gitApplicationPath: week4/DockerVolumeTest/multi-container-app/app
+    dockerCompose:
+      build:
+        context: ./week4/DockerVolumeTest/multi-container-app/app
+        dockerfile: Dockerfile
+      environment:
+        NODE_ENV: production
+      ports:
+        - '3000:3000'
+        - '35729:35729'
+    hosts:
+      - hostname: 'todo-app-{{ env.base_domain }}'
+        path: /
+        servicePort: 3000
+  - kind: Database
+    name: todo-database
+    dockerCompose:
+      image: 'mongo:6'
+      ports:
+        - '27017:27017'
+    volumes:
+      - name: database
+        mount: /data/db
+        subPath: ''
+volumes:
+  - name: database
+    size: 1Gi
+    type: disk

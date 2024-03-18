@@ -1,0 +1,9 @@
+groups:
+  - name: DemoAlerts
+    rules:
+      - alert: "On api down"
+        expr: up{job="api"} < 1
+        for: 30s
+      - alert: "API Slow"
+        expr: http_request_duration_seconds_sum{job="api", path="/users/slow"} > 2
+        for: 20s

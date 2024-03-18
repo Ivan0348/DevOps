@@ -1,3 +1,13 @@
+const promBundle = require('express-prom-bundle');
+const metricsMiddleware = promBundle({
+    includePath: true,
+    includeStatusCode: true,
+    normalizePath: true,
+    promClient: {
+        collectDefaultMetrics: {}
+    }
+});
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -18,6 +28,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(metricsMiddleware); // enable Metrics middleware
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
