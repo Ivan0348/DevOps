@@ -1,7 +1,7 @@
 kind: Environment
 name: preview
 type: primary
-urlHandle: 227poy
+urlHandle: kippenpotenAanDeMacht
 components:
   - kind: Application
     name: todo-app
