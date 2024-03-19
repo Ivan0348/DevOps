@@ -25,7 +25,7 @@ jobs:
       project-id: "pJrQ9nLr03"
       cluster-id: "pJrQ9nLr03"
       env-name: "Demo PR #${{ needs.load-artifact-from-reusable.outputs.pr-number }}"
-      bunnyshell-yaml-contents: ${{ needs.load-artifact-from-reusable.outputs.bunnyshell-yaml-contents }}
+      bunnyshell-yaml-contents: "kind: Environment\nname: preview\ntype: primary\nurlHandle: g4fnfl\ncomponents:\n  - kind: Application\n    name: todo-app\n    gitRepo: 'https://github.com/Ivan0348/DevOps.git'\n    gitBranch: main\n    gitApplicationPath: week4/DockerVolumeTest/multi-container-app/app\n    dockerCompose:\n      build:\n        context: ./week4/DockerVolumeTest/multi-container-app/app\n        dockerfile: Dockerfile\n      environment:\n        NODE_ENV: production\n      ports:\n        - '3000:3000'\n        - '35729:35729'\n    hosts:\n      - hostname: 'todo-app-{{ env.base_domain }}'\n        path: /\n        servicePort: 3000\n  - kind: Database\n    name: todo-database\n    dockerCompose:\n      image: 'mongo:6'\n      ports:\n        - '27017:27017'\n    volumes:\n      - name: database\n        mount: /data/db\n        subPath: ''\nvolumes:\n  - name: database\n    size: 1Gi\n    type: disk\n"
       comment-on-pr: true
     secrets:
       bunnyshell-access-token: "2809:83a5b4f152cc8eed434a06890e7992ad"
