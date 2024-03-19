@@ -28,7 +28,7 @@ app.locals.moment = moment;
 const db = require('./config/keys').mongoProdURI;
 mongoose
     .connect(db, {useNewUrlParser: true})
-    .then(() => console.log(`Mongodb Connected 7`))
+    .then(() => console.log(`Mongodb Connected 9`))
     .catch(error => console.log(error));
 
 
