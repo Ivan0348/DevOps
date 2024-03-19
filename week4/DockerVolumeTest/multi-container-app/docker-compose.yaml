@@ -25,7 +25,7 @@ services:
         #- path: ./app/package.json
         # action: rebuild
         #- path: ./app
-        #  target: /usr/src/app
+      #  target: /usr/src/app
       #   action: sync
 
   todo-database:
