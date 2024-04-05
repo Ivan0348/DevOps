@@ -8,6 +8,8 @@ on:
       - "*.md"
   issue_comment:
     types: [ created, edited ]
+  push:
+    branches: [ main ]
 jobs:
   deploy_prepare:
     name: Prepare Deployment of Environment
