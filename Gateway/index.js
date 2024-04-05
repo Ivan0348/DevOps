@@ -12,7 +12,7 @@ const options = {
 app.use("/doc", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs, options));
 
 app.get('/', (req, res) => {
-    res.send('Welkom bij de Gateway! v1');
+    res.send('Welkom bij de Gateway!! v1');
 });
 
 // catch 404 and forward a correct error message
