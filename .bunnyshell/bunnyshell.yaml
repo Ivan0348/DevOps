@@ -1,29 +1,9 @@
 kind: Environment
-name: preview
+name: production
 type: primary
-urlHandle: DEVOPS_IVAN_YURIAN
 components:
-  - kind: MessageBus
-    name: messagebus
-    dockerCompose:
-      image: 'rabbitmq:3-management'
-      volumes:
-        - name: messagebus_data
-          mount: /data/messagebus_devops
-      ports:
-        - '5672:5672'
-        - '15672:15672'
-  - kind: Database
-    name: mongo
-    dockerCompose:
-      image: 'mongo:latest'
-      volumes:
-        - name: mongodb_data
-          mount: /data/db_devops
-      ports:
-        - '27017:27017'
   - kind: Application
-    name: api_gateway
+    name: api-gateway
     gitRepo: 'https://github.com/Ivan0348/DevOps.git'
     gitBranch: main
     gitApplicationPath: Gateway
@@ -32,50 +12,29 @@ components:
         context: ./Gateway
         dockerfile: Dockerfile
       environment:
-        DOCKERPORT: ${GATEWAYPORT}
+        ACCESS_TOKEN_EXPIRES: 1h
+        ACCESS_TOKEN_SECRET: MYSECRETACCESS
+        DOCKERPORT: '5000'
+        GATEWAY_SECRET: MYSECRETGATEWAY
+        GATEWAYLOCATION: 'http://api_gateway:5000'
+        GATEWAYPORT: '5000'
+        LOGINLOCATION: 'http://login_service:3002'
+        LOGINPORT: '3002'
+        MONGODBLOGIN: 'mongodb://mongo:27017/devops_log'
+        MONGODBREGISTRATION: 'mongodb://mongo:27017/devops_reg'
+        NODE_ALPINE_VERSION: 20.11.0
+        RABBITMQ_URL: 'amqp://messagebus'
+        REFRESH_TOKEN_SECRET: MYREFRESHTOKENSECRET
+        REGISTRATIONLOCATION: 'http://register_service:3001'
+        REGISTRATIONPORT: '3001'
+        TEST_MAIL: ivanoonincx48@gmail.com
       ports:
-        - '${DEVOPS_GATEWAYPORT}:${DEVOPS_GATEWAYPORT}'
-    envFiles:
-      - docker.env
-    depends_on:
-      - mongo
-  - kind: Microservice
-    name: register_service
-    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
-    gitBranch: main
-    gitApplicationPath: Microservices/register-service
-    dockerCompose:
-      build:
-        context: ./Microservices/register-service
-        dockerfile: Dockerfile
-      environment:
-        DOCKERPORT: ${REGISTRATIONPORT}
-      ports:
-        - '${DEVOPS_REGISTRATIONPORT}:${DEVOPS_REGISTRATIONPORT}'
-    envFiles:
-      - docker.env
-    depends_on:
-      - mongo
-      - messagebus
-  - kind: Microservice
-    name: login_service
-    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
-    gitBranch: main
-    gitApplicationPath: Microservices/login-service
-    dockerCompose:
-      build:
-        context: ./Microservices/login-service
-        dockerfile: Dockerfile
-      environment:
-        DOCKERPORT: ${LOGINPORT}
-      ports:
-        - '${DEVOPS_LOGINPORT}:${DEVOPS_LOGINPORT}'
-    envFiles:
-      - docker.env
-    depends_on:
-      - mongo
-      - messagebus
-  - kind: Monitoring
+        - '5000:5000'
+    hosts:
+      - hostname: 'api-gateway-{{ env.base_domain }}'
+        path: /
+        servicePort: 5000
+  - kind: Application
     name: grafana
     gitRepo: 'https://github.com/Ivan0348/DevOps.git'
     gitBranch: main
@@ -86,25 +45,123 @@ components:
         dockerfile: Dockerfile
       ports:
         - '3000:3000'
-  - kind: Monitoring
+    hosts:
+      - hostname: 'grafana-{{ env.base_domain }}'
+        path: /
+        servicePort: 3000
+  - kind: Application
+    name: login-service
+    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
+    gitBranch: main
+    gitApplicationPath: Microservices/login-service
+    dockerCompose:
+      build:
+        context: ./Microservices/login-service
+        dockerfile: Dockerfile
+      environment:
+        ACCESS_TOKEN_EXPIRES: 1h
+        ACCESS_TOKEN_SECRET: MYSECRETACCESS
+        DOCKERPORT: '3002'
+        GATEWAY_SECRET: MYSECRETGATEWAY
+        GATEWAYLOCATION: 'http://api_gateway:5000'
+        GATEWAYPORT: '5000'
+        LOGINLOCATION: 'http://login_service:3002'
+        LOGINPORT: '3002'
+        MONGODBLOGIN: 'mongodb://mongo:27017/devops_log'
+        MONGODBREGISTRATION: 'mongodb://mongo:27017/devops_reg'
+        NODE_ALPINE_VERSION: 20.11.0
+        RABBITMQ_URL: 'amqp://messagebus'
+        REFRESH_TOKEN_SECRET: MYREFRESHTOKENSECRET
+        REGISTRATIONLOCATION: 'http://register_service:3001'
+        REGISTRATIONPORT: '3001'
+        TEST_MAIL: ivanoonincx48@gmail.com
+      ports:
+        - '3002:3002'
+    hosts:
+      - hostname: 'login-service-{{ env.base_domain }}'
+        path: /
+        servicePort: 3002
+  - kind: Service
+    name: messagebus
+    dockerCompose:
+      image: 'rabbitmq:3-management'
+      ports:
+        - '5672:5672'
+        - '15672:15672'
+    hosts:
+      - hostname: 'messagebus-{{ env.base_domain }}'
+        path: /
+        servicePort: 5672
+    volumes:
+      - name: messagebus-data
+        mount: /data/messagebus_devops
+        subPath: ''
+  - kind: Database
+    name: mongo
+    dockerCompose:
+      image: 'mongo:latest'
+      ports:
+        - '27017:27017'
+    volumes:
+      - name: mongodb-data
+        mount: /data/db_devops
+        subPath: ''
+  - kind: Service
     name: prometheus
     dockerCompose:
+      command:
+        - '--web.enable-lifecycle'
+        - '--config.file=/etc/prometheus/prometheus.yml'
       image: 'prom/prometheus:latest'
-      volumes:
-        - name: prometheus_data
-          mount: /prometheus
-        - local: ./prometheus
-          mount: /etc/prometheus
       ports:
         - '9090:9090'
-      command: --config.file=/etc/prometheus/prometheus.yml --web.enable-lifecycle
+    hosts:
+      - hostname: 'prometheus-{{ env.base_domain }}'
+        path: /
+        servicePort: 9090
+    volumes:
+      - name: prometheus-data
+        mount: /prometheus
+        subPath: ''
+  - kind: Application
+    name: register-service
+    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
+    gitBranch: main
+    gitApplicationPath: Microservices/register-service
+    dockerCompose:
+      build:
+        context: ./Microservices/register-service
+        dockerfile: Dockerfile
+      environment:
+        ACCESS_TOKEN_EXPIRES: 1h
+        ACCESS_TOKEN_SECRET: MYSECRETACCESS
+        DOCKERPORT: '3001'
+        GATEWAY_SECRET: MYSECRETGATEWAY
+        GATEWAYLOCATION: 'http://api_gateway:5000'
+        GATEWAYPORT: '5000'
+        LOGINLOCATION: 'http://login_service:3002'
+        LOGINPORT: '3002'
+        MONGODBLOGIN: 'mongodb://mongo:27017/devops_log'
+        MONGODBREGISTRATION: 'mongodb://mongo:27017/devops_reg'
+        NODE_ALPINE_VERSION: 20.11.0
+        RABBITMQ_URL: 'amqp://messagebus'
+        REFRESH_TOKEN_SECRET: MYREFRESHTOKENSECRET
+        REGISTRATIONLOCATION: 'http://register_service:3001'
+        REGISTRATIONPORT: '3001'
+        TEST_MAIL: ivanoonincx48@gmail.com
+      ports:
+        - '3001:3001'
+    hosts:
+      - hostname: 'register-service-{{ env.base_domain }}'
+        path: /
+        servicePort: 3001
 volumes:
-  - name: mongodb_data
+  - name: messagebus-data
     size: 1Gi
     type: disk
-  - name: messagebus_data
+  - name: mongodb-data
     size: 1Gi
     type: disk
-  - name: prometheus_data
+  - name: prometheus-data
     size: 1Gi
     type: disk
