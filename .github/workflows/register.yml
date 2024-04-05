@@ -4,8 +4,6 @@
 name: registratie-service tests
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 

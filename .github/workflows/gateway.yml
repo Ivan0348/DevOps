@@ -4,8 +4,6 @@
 name: gateway tests
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
