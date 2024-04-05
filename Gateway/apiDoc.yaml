@@ -1,0 +1,137 @@
+openapi: "3.0.0"
+info:
+  title: Webs5 API
+  description: This is the API documentation for the Webs5 project.
+  version: 1.0
+tags:
+  - name: Authentication
+    description: API endpoints for user authentication
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  security:
+    - bearerAuth: [ ]
+
+paths:
+  /api/register:
+    post:
+      tags: [ Authentication ]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  example: "owner"
+                  type: string
+                password:
+                  example: "password"
+                  type: string
+                email:
+                  example: "nepEmail@Email.com"
+                  type: string
+                role:
+                  example: "owner"
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Bad Json request - missing username, password, email or role
+        '409':
+          description: Conflict - if parameter is already in use
+        '500':
+          description: Internal server error
+        '503':
+          description: Service is unavailable
+
+  /api/login:
+    post:
+      tags: [ Authentication ]
+      summary: Authenticate user and generate JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  example: "owner"
+                  type: string
+                password:
+                  example: "password"
+                  type: string
+      responses:
+        '200':
+          description: JWT token generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Bad Json request - missing username, password
+        '401':
+          description: Conflict - invalid username, password or email not verified
+        '500':
+          description: Internal server error
+        '503':
+          description: Service is unavailable
+
+  /api/logout:
+    delete:
+      tags: [ Authentication ]
+      summary: Delete token and logout
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '204':
+          description: Token is removed and you cannot access the service anymore
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+        '503':
+          description: Service is unavailable
+
+  /api/token:
+    post:
+      tags: [ Authentication ]
+      summary: Get new token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '201':
+          description: JWT token generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Bad Json request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+        '503':
+          description: Service is unavailable
+

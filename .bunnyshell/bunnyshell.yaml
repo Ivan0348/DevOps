@@ -1,0 +1,110 @@
+kind: Environment
+name: preview
+type: primary
+urlHandle: DEVOPS_IVAN_YURIAN
+components:
+  - kind: MessageBus
+    name: messagebus
+    dockerCompose:
+      image: 'rabbitmq:3-management'
+      volumes:
+        - name: messagebus_data
+          mount: /data/messagebus_devops
+      ports:
+        - '5672:5672'
+        - '15672:15672'
+  - kind: Database
+    name: mongo
+    dockerCompose:
+      image: 'mongo:latest'
+      volumes:
+        - name: mongodb_data
+          mount: /data/db_devops
+      ports:
+        - '27017:27017'
+  - kind: Application
+    name: api_gateway
+    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
+    gitBranch: main
+    gitApplicationPath: Gateway
+    dockerCompose:
+      build:
+        context: ./Gateway
+        dockerfile: Dockerfile
+      environment:
+        DOCKERPORT: ${GATEWAYPORT}
+      ports:
+        - '${DEVOPS_GATEWAYPORT}:${DEVOPS_GATEWAYPORT}'
+    envFiles:
+      - docker.env
+    depends_on:
+      - mongo
+  - kind: Microservice
+    name: register_service
+    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
+    gitBranch: main
+    gitApplicationPath: Microservices/register-service
+    dockerCompose:
+      build:
+        context: ./Microservices/register-service
+        dockerfile: Dockerfile
+      environment:
+        DOCKERPORT: ${REGISTRATIONPORT}
+      ports:
+        - '${DEVOPS_REGISTRATIONPORT}:${DEVOPS_REGISTRATIONPORT}'
+    envFiles:
+      - docker.env
+    depends_on:
+      - mongo
+      - messagebus
+  - kind: Microservice
+    name: login_service
+    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
+    gitBranch: main
+    gitApplicationPath: Microservices/login-service
+    dockerCompose:
+      build:
+        context: ./Microservices/login-service
+        dockerfile: Dockerfile
+      environment:
+        DOCKERPORT: ${LOGINPORT}
+      ports:
+        - '${DEVOPS_LOGINPORT}:${DEVOPS_LOGINPORT}'
+    envFiles:
+      - docker.env
+    depends_on:
+      - mongo
+      - messagebus
+  - kind: Monitoring
+    name: grafana
+    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
+    gitBranch: main
+    gitApplicationPath: grafana
+    dockerCompose:
+      build:
+        context: ./grafana
+        dockerfile: Dockerfile
+      ports:
+        - '3000:3000'
+  - kind: Monitoring
+    name: prometheus
+    dockerCompose:
+      image: 'prom/prometheus:latest'
+      volumes:
+        - name: prometheus_data
+          mount: /prometheus
+        - local: ./prometheus
+          mount: /etc/prometheus
+      ports:
+        - '9090:9090'
+      command: --config.file=/etc/prometheus/prometheus.yml --web.enable-lifecycle
+volumes:
+  - name: mongodb_data
+    size: 1Gi
+    type: disk
+  - name: messagebus_data
+    size: 1Gi
+    type: disk
+  - name: prometheus_data
+    size: 1Gi
+    type: disk
