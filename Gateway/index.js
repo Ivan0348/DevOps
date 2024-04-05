@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 });
 
 // catch 404 and forward a correct error message
-app.use((req, res, next) => {
+app.use((req, res) => {
     res.status(404).send("Not Found");
 });
 

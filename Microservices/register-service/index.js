@@ -8,7 +8,7 @@ const port = process.env.REGISTRATIONPORT;
 const canStart = {};
 
 function checkCanStart() {
-    app.use((req, res, next) => {
+    app.use((req, res) => {
         res.status(404).send("Not Found");
     });
     if (canStart.conToMessageBus && canStart.conToDBConn) {
