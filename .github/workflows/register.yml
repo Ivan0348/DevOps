@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        services: [ registratie ]
+        services: [ register ]
 
     steps:
       - name: go to ${{ matrix.services }}-service
