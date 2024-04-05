@@ -3,15 +3,13 @@
   "version": "1.0.0",
   "description": "schoolProject",
   "scripts": {
-    "start:gateway": "cd Gateway && npm run local",
     "start:login": "cd Microservices/login-service && npm run local",
     "start:registatie": "cd Microservices/register-service && npm run local",
-    "all": "run-p start:login start:gateway start:registatie",
-    "test:gateway": "cd Gateway && npm run test",
+    "all": "run-p start:login start:registatie",
     "test:registatie": "cd Microservices/register-service && npm run test",
     "test:login": "cd Microservices/login-service && npm test",
     "test:all": "run-p test:login test:gateway test:registatie",
-    "test:foreach": "npm run test:login && npm run test:gateway && npm run test:registatie",
+    "test:foreach": "npm run test:login && npm run test:registatie",
     "test:eslint": "eslint ."
   },
   "devDependencies": {

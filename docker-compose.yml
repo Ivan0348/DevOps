@@ -16,17 +16,6 @@ services:
     ports:
       - "27017:27017"
 
-  api_gateway:
-    build: ./Gateway
-    ports:
-      - "5000:5000"
-    env_file:
-      docker.env
-    environment:
-      - DOCKERPORT=5000
-    depends_on:
-      - mongo
-
   register_service:
     build: Microservices/register-service
     ports:
@@ -67,8 +56,23 @@ services:
 
 volumes:
   mongodb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/db_devops
   messagebus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/messagebus_devops
   prometheus-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /prometheus
 
 
 
