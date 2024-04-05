@@ -9,7 +9,7 @@ async function login(req, res) {
         console.log("Login request received for user:", username);
 
         const user = await User.findOne({username});
-
+        console.log(user);
         if (!user) {
             return res.status(401).json({error: 'User does not exist'});
         }
@@ -115,9 +115,9 @@ async function verifyAccount(req, res) {
 }
 
 async function getVerifyStatus(req, res) {
+    const {username} = req.query;
 
     let verified = false;
-    const {username} = req.body;
 
     const user = await User.findOne({username});
 

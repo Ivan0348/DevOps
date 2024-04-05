@@ -27,6 +27,8 @@ async function dbSeeder() {
             passwordHash: await hashPassword('password'),
             email: 'owner@owner',
             role: 'owner',
+            isVerified: true,
+            verifyToken: 1234
         });
     }
 
@@ -36,6 +38,8 @@ async function dbSeeder() {
             passwordHash: await hashPassword('password'),
             email: 'participant@participant',
             role: 'participant',
+            isVerified: false,
+            verifyToken: 4321
         });
     }
     console.log('Database seeded');

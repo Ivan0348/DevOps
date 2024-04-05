@@ -18,7 +18,7 @@ components:
         path: /
         servicePort: 3000
   - kind: Application
-    name: login-service
+    name: login_service
     gitRepo: 'https://github.com/Ivan0348/DevOps.git'
     gitBranch: main
     gitApplicationPath: Microservices/login-service
@@ -92,7 +92,7 @@ components:
         mount: /prometheus
         subPath: ''
   - kind: Application
-    name: register-service
+    name: register_service
     gitRepo: 'https://github.com/Ivan0348/DevOps.git'
     gitBranch: main
     gitApplicationPath: Microservices/register-service
