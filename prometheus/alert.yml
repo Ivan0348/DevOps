@@ -2,8 +2,8 @@ groups:
   - name: DemoAlerts
     rules:
       - alert: "On login down"
-        expr: up{job="login_service"} < 1
+        expr: up{job="login-service"} < 1
         for: 30s
       - alert: "On register down"
-        expr: up{job="register_service"} < 1
+        expr: up{job="register-service"} < 1
         for: 30s
