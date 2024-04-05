@@ -16,7 +16,7 @@ services:
     ports:
       - "27017:27017"
 
-  register_service:
+  register-service:
     build: Microservices/register-service
     ports:
       - "3001:3001"
@@ -28,7 +28,7 @@ services:
       - mongo
       - messagebus
 
-  login_service:
+  login-service:
     build: ./Microservices/login-service
     ports:
       - "3002:3002"
