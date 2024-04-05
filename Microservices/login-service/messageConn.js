@@ -12,6 +12,8 @@ async function callback(message) {
             passwordHash: jsonObject.passwordHash,
             email: jsonObject.email,
             role: jsonObject.role,
+            isVerified: jsonObject.isVerified,
+            verifyToken: jsonObject.verifyToken
         });
 
         await user.save();

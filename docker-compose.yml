@@ -46,7 +46,9 @@ services:
       - "3000:3000"
 
   prometheus:
-    image: prom/prometheus:latest
+    build:
+      context: ./prometheus
+      dockerfile: Dockerfile
     volumes:
       - ./prometheus:/etc/prometheus
       - prometheus-data:/prometheus

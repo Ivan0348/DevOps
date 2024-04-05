@@ -29,9 +29,10 @@ async function register(req, res) {
 
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
+        const verifyToken = await bcrypt.genSalt(5);
 
 
-        const newUser = new User({username, email});
+        const newUser = new User({username, email, verifyToken});
         await newUser.save();
 
         publishMessageForLogin({
@@ -39,6 +40,8 @@ async function register(req, res) {
             "passwordHash": passwordHash,
             "email": email,
             "role": role,
+            "isVerified": false,
+            "verifyToken": verifyToken
         });
 
         res.status(201).json({message: 'User registered successfully'});
