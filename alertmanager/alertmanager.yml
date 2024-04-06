@@ -1,0 +1,23 @@
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'ivanoonincx48@gmail.com'
+  smtp_auth_username: 'ivanoonincx48@gmail.com'
+  smtp_auth_password: 'iygpbrbbrvajavgn'
+route:
+  group_wait: 15s
+  group_interval: 5m
+  repeat_interval: 3h
+  receiver: 'devops'
+receivers:
+  - name: 'devops'
+    email_configs:
+      - to: 'i.oonincx@student.avans.nl'
+        headers:
+          subject: "Een van uw services is offline!"
+        html: |
+          <html>
+            <body>
+              <p> Een van uw services is offline! </p>
+            </body>
+          </html>

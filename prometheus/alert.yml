@@ -1,5 +1,5 @@
 groups:
-  - name: DemoAlerts
+  - name: DevopsAlerts
     rules:
       - alert: "On login down"
         expr: up{job="login-service"} < 1

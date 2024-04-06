@@ -56,6 +56,13 @@ services:
       - "9090:9090"
     command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
 
+  alertmanager:
+    build:
+      context: ./alertmanager
+      dockerfile: Dockerfile
+    ports:
+      - "9093:9093"
+
 volumes:
   mongodb_data:
   messagebus_data:
