@@ -8,7 +8,7 @@ async function connectToDb(dbConnection) {
             await mongoose.connect(dbConnection);
             isConnected = true;
         } catch (error) {
-            console.error('Failed to connect to MongoDB, retrying...');
+            console.error('\nFailed to connect to MongoDB, retrying...');
             /* eslint-disable no-undef */
             await new Promise((resolve) => setTimeout(resolve, 5000));
             /* eslint-enable no-undef */
