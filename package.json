@@ -8,7 +8,7 @@
     "all": "run-p start:login start:registatie",
     "test:registatie": "cd Microservices/register-service && npm run test",
     "test:login": "cd Microservices/login-service && npm test",
-    "test:all": "run-p test:login test:gateway test:registatie",
+    "test:all": "run-p test:login test:registatie",
     "test:foreach": "npm run test:login && npm run test:registatie",
     "test:eslint": "eslint ."
   },
