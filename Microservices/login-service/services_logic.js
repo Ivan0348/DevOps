@@ -122,7 +122,7 @@ async function getVerifyStatus(req, res) {
     const user = await User.findOne({username});
 
     if (!user) {
-        return res.status(401).json({error: 'User does not exist'});
+        return res.status(401).json({error: 'User does not exist!'});
     }
 
     verified = !!user.isVerified;
