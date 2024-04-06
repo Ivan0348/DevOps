@@ -42,36 +42,26 @@ components:
       - name: mongodb-data
         mount: /data/db_devops
         subPath: ''
-  - kind: Application
-    name: register-service
-    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
-    gitBranch: main
-    gitApplicationPath: Microservices/register-service
+
+  - kind: Service
+    name: messagebus
     dockerCompose:
-      build:
-        context: ./Microservices/register-service
-        dockerfile: Dockerfile
-      environment:
-        ACCESS_TOKEN_EXPIRES: 1h
-        ACCESS_TOKEN_SECRET: MYSECRETACCESS
-        DOCKERPORT: '3001'
-        LOGINLOCATION: 'http://login-service:3002'
-        LOGINPORT: '3002'
-        MONGODBLOGIN: 'mongodb://mongo:27017/devops_log'
-        MONGODBREGISTRATION: 'mongodb://mongo:27017/devops_reg'
-        NODE_ALPINE_VERSION: 20.11.0
-        RABBITMQ_URL: 'amqp://messagebus'
-        REFRESH_TOKEN_SECRET: MYREFRESHTOKENSECRET
-        REGISTRATIONLOCATION: 'http://register-service:3001'
-        REGISTRATIONPORT: '3001'
-        TEST_MAIL: ivanoonincx48@gmail.com
+      image: 'rabbitmq:3-management'
       ports:
-        - '3001:3001'
+        - '5672:5672'
+        - '15672:15672'
     hosts:
-      - hostname: 'register-service-{{ env.base_domain }}'
+      - hostname: 'messagebus-{{ env.base_domain }}'
         path: /
-        servicePort: 3001
+        servicePort: 5672
+    volumes:
+      - name: messagebus-data
+        mount: /data/messagebus_devops
+        subPath: ''
 volumes:
   - name: mongodb-data
+    size: 1Gi
+    type: disk
+  - name: messagebus-data
     size: 1Gi
     type: disk
