@@ -8,7 +8,7 @@ class MessageBus {
                 this.conn = await this.amqp.connect(this.rabbitMQUrl);
                 this.channel = await this.conn.createChannel();
             } catch (error) {
-                console.error('Failed to connect to RabbitMQ, retrying...');
+                console.error('\nFailed to connect to RabbitMQ, retrying...');
                 /* eslint-disable no-undef */
                 await new Promise((resolve) => setTimeout(resolve, 5000));
                 /* eslint-enable no-undef */
