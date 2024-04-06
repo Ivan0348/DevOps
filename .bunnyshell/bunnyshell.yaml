@@ -1,22 +1,8 @@
 kind: Environment
-name: prod
+name: preview
 type: primary
+urlHandle: devopspreviewvanyurianenivan
 components:
-  - kind: Application
-    name: grafana
-    gitRepo: 'https://github.com/Ivan0348/DevOps.git'
-    gitBranch: main
-    gitApplicationPath: grafana
-    dockerCompose:
-      build:
-        context: ./grafana
-        dockerfile: Dockerfile
-      ports:
-        - '3000:3000'
-    hosts:
-      - hostname: 'grafana-{{ env.base_domain }}'
-        path: /
-        servicePort: 3000
   - kind: Application
     name: login-service
     gitRepo: 'https://github.com/Ivan0348/DevOps.git'
@@ -46,21 +32,6 @@ components:
       - hostname: 'login-service-{{ env.base_domain }}'
         path: /
         servicePort: 3002
-  - kind: Service
-    name: messagebus
-    dockerCompose:
-      image: 'rabbitmq:3-management'
-      ports:
-        - '5672:5672'
-        - '15672:15672'
-    hosts:
-      - hostname: 'messagebus-{{ env.base_domain }}'
-        path: /
-        servicePort: 5672
-    volumes:
-      - name: messagebus-data
-        mount: /data/messagebus_devops
-        subPath: ''
   - kind: Database
     name: mongo
     dockerCompose:
@@ -70,23 +41,6 @@ components:
     volumes:
       - name: mongodb-data
         mount: /data/db_devops
-        subPath: ''
-  - kind: Service
-    name: prometheus
-    dockerCompose:
-      command:
-        - '--web.enable-lifecycle'
-        - '--config.file=/etc/prometheus/prometheus.yml'
-      image: 'prom/prometheus:latest'
-      ports:
-        - '9090:9090'
-    hosts:
-      - hostname: 'prometheus-{{ env.base_domain }}'
-        path: /
-        servicePort: 9090
-    volumes:
-      - name: prometheus-data
-        mount: /prometheus
         subPath: ''
   - kind: Application
     name: register-service
@@ -118,12 +72,6 @@ components:
         path: /
         servicePort: 3001
 volumes:
-  - name: messagebus-data
-    size: 1Gi
-    type: disk
   - name: mongodb-data
-    size: 1Gi
-    type: disk
-  - name: prometheus-data
     size: 1Gi
     type: disk
